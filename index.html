@@ -3,50 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive 3D Phone Showcase</title>
-  
-  <!-- Modern Typography from Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <title>3D Phone Front View</title>
   
   <style>
     :root {
-      --bg-dark: #090a0f;
-      --bg-gradient: radial-gradient(circle at 50% 35%, rgba(245, 166, 35, 0.15) 0%, rgba(20, 22, 35, 0.95) 45%, #07080c 100%);
-      --accent-gold: #ffb703;
-      --accent-yellow: #fb8500;
-      --accent-glow: rgba(255, 183, 3, 0.35);
-      --glass-bg: rgba(255, 255, 255, 0.04);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-highlight: rgba(255, 255, 255, 0.2);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --font-display: 'Outfit', sans-serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
-      --phone-width: 320px;
-      --phone-aspect: 0.5;
-    }
-
-    [data-theme="gold"] {
-      --bg-gradient: radial-gradient(circle at 50% 35%, rgba(234, 179, 8, 0.22) 0%, rgba(30, 26, 18, 0.95) 50%, #0c0a06 100%);
-      --accent-gold: #fbbf24;
-      --accent-yellow: #f59e0b;
-      --accent-glow: rgba(245, 158, 11, 0.45);
+      --bg-gradient: radial-gradient(circle at 50% 35%, rgba(245, 166, 35, 0.18) 0%, #0e111a 55%, #06070a 100%);
+      --accent-glow: rgba(255, 183, 3, 0.3);
+      --glass-border: rgba(255, 255, 255, 0.12);
     }
 
     [data-theme="cyber"] {
-      --bg-gradient: radial-gradient(circle at 50% 35%, rgba(6, 182, 212, 0.18) 0%, rgba(15, 23, 42, 0.95) 50%, #030712 100%);
-      --accent-gold: #38bdf8;
-      --accent-yellow: #06b6d4;
-      --accent-glow: rgba(56, 189, 248, 0.4);
+      --bg-gradient: radial-gradient(circle at 50% 35%, rgba(6, 182, 212, 0.2) 0%, #0c1524 55%, #030712 100%);
+      --accent-glow: rgba(56, 189, 248, 0.35);
     }
 
-    [data-theme="monochrome"] {
-      --bg-gradient: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.08) 0%, rgba(18, 18, 18, 0.95) 50%, #050505 100%);
-      --accent-gold: #ffffff;
-      --accent-yellow: #cbd5e1;
-      --accent-glow: rgba(255, 255, 255, 0.25);
+    [data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.08) 0%, #12141a 55%, #050608 100%);
+      --accent-glow: rgba(255, 255, 255, 0.2);
     }
 
     * {
@@ -58,990 +31,255 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      background-image: var(--bg-gradient);
-      color: var(--text-main);
-      font-family: var(--font-body);
       min-height: 100vh;
-      width: 100vw;
-      overflow-x: hidden;
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      position: relative;
-      transition: background-image 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      justify-content: center;
+      background: #06070a;
+      background-image: var(--bg-gradient);
+      overflow: hidden;
+      perspective: 1200px;
+      touch-action: none;
+      transition: background-image 0.5s ease;
+      font-family: system-ui, -apple-system, sans-serif;
     }
 
-    /* Ambient Background Glow Effect */
+    /* Ambient Glow Behind Phone */
     .ambient-glow {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -55%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0, 0, 0, 0) 70%);
-      filter: blur(60px);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(50px);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.85;
-      transition: all 0.5s ease;
-      animation: pulseAura 8s ease-in-out infinite alternate;
+      transition: background 0.5s ease;
     }
 
-    @keyframes pulseAura {
-      0% { transform: translate(-50%, -55%) scale(0.9); opacity: 0.7; }
-      100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.95; }
-    }
-
-    /* Background Grid Pattern */
-    .bg-grid {
-      position: absolute;
-      inset: 0;
-      background-size: 40px 40px;
-      background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      mask-image: radial-gradient(circle at 50% 45%, black 20%, transparent 75%);
-      -webkit-mask-image: radial-gradient(circle at 50% 45%, black 20%, transparent 75%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Header Nav */
-    header {
-      width: 100%;
-      max-width: 1200px;
-      padding: 24px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 20;
+    /* 3D Stage & Card Container */
+    .card-3d-wrap {
       position: relative;
-    }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.25rem;
-      letter-spacing: -0.02em;
-    }
-
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--accent-gold), var(--accent-yellow));
-      color: #000;
-      font-weight: 800;
-      box-shadow: 0 4px 15px var(--accent-glow);
-    }
-
-    .header-tags {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-      animation: blink 2s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* Main 3D Stage Section */
-    .showcase-stage {
-      position: relative;
-      width: 100%;
-      flex: 1;
+      width: min(340px, 78vw);
+      aspect-ratio: 1 / 2;
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 1200px;
-      perspective-origin: 50% 45%;
-      z-index: 10;
-      padding: 20px 0;
       cursor: grab;
+      z-index: 10;
     }
 
-    .showcase-stage:active {
+    .card-3d-wrap:active {
       cursor: grabbing;
     }
 
-    /* 3D Scene Wrapper */
-    .scene {
+    /* 3D Phone Element */
+    .phone-card {
       position: relative;
+      width: 100%;
+      height: 100%;
       transform-style: preserve-3d;
       will-change: transform;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    /* The 3D Object Group */
-    .phone-3d-card {
-      position: relative;
-      width: var(--phone-width);
-      height: calc(var(--phone-width) / var(--phone-aspect));
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform 0.08s ease-out;
-    }
-
-    /* Phone Image Layer */
-    .phone-media {
-      position: absolute;
-      inset: 0;
+    /* Phone Image */
+    .phone-img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       pointer-events: none;
-      transform-style: preserve-3d;
-      transform: translateZ(10px);
-      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.45));
+      filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.65));
+      transform: translateZ(20px);
     }
 
-    /* Specular Glare / Light Reflection Overlay */
-    .glare-overlay {
+    /* Dynamic Specular Light Glare */
+    .glare {
       position: absolute;
-      top: 1.5%;
-      left: 3.5%;
-      right: 3.5%;
-      bottom: 2%;
+      inset: 2% 4%;
       border-radius: 46px;
-      background: linear-gradient(
-        125deg,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0.1) 25%,
-        rgba(255, 255, 255, 0) 50%,
-        rgba(255, 255, 255, 0.15) 80%,
-        rgba(255, 255, 255, 0) 100%
-      );
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 60%);
       mix-blend-mode: overlay;
       pointer-events: none;
-      opacity: 0.65;
-      transform: translateZ(14px);
-      transition: opacity 0.3s ease;
-    }
-
-    /* Golden Rim Light Accent */
-    .phone-rim-glow {
-      position: absolute;
-      inset: 0;
-      border-radius: 52px;
-      box-shadow: 0 0 35px var(--accent-glow);
-      pointer-events: none;
       opacity: 0.7;
-      transform: translateZ(0px);
-      transition: box-shadow 0.4s ease;
+      transform: translateZ(24px);
     }
 
-    /* 3D Realistic Dynamic Floor Shadow */
-    .shadow-floor {
+    /* Dynamic Realistic Floor Shadow */
+    .shadow {
       position: absolute;
-      bottom: -40px;
+      bottom: -35px;
       left: 50%;
-      width: 80%;
-      height: 60px;
-      transform: translateX(-50%) rotateX(85deg) translateZ(-60px);
-      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0) 80%);
-      filter: blur(16px);
+      width: 75%;
+      height: 35px;
+      transform: translateX(-50%) rotateX(90deg) translateZ(-40px);
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.8) 0%, transparent 75%);
+      filter: blur(12px);
       pointer-events: none;
       transform-style: preserve-3d;
-      transition: transform 0.1s ease-out, opacity 0.2s ease;
     }
 
-    /* Floor Reflection */
-    .floor-reflection {
+    /* Theme Switcher Bar */
+    .theme-bar {
       position: absolute;
-      bottom: -75%;
-      left: 0;
-      width: 100%;
-      height: 75%;
-      transform: rotateX(180deg) scaleY(0.7) translateZ(-10px);
-      opacity: 0.15;
-      filter: blur(3px);
-      mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 80%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 80%);
-      pointer-events: none;
-    }
-
-    .floor-reflection img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    /* Floating 3D Depth Elements / Badges */
-    .floating-layer {
-      position: absolute;
-      background: rgba(18, 20, 30, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.5),
-        0 0 20px var(--accent-glow);
-      pointer-events: auto;
-      transform-style: preserve-3d;
-      will-change: transform;
-      cursor: pointer;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    }
-
-    .floating-layer:hover {
-      border-color: var(--accent-gold);
-      background: rgba(26, 30, 46, 0.9);
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.6),
-        0 0 30px var(--accent-glow);
-    }
-
-    .badge-top-right {
-      top: 15%;
-      right: -80px;
-      transform: translateZ(65px);
-    }
-
-    .badge-bottom-left {
-      bottom: 22%;
-      left: -90px;
-      transform: translateZ(80px);
-    }
-
-    .badge-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--accent-gold);
-    }
-
-    .badge-content h4 {
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-
-    .badge-content p {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    /* Floating Interactive Controls HUD */
-    .controls-panel {
-      width: 100%;
-      max-width: 900px;
-      padding: 20px 24px 32px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
+      border-radius: 999px;
       z-index: 20;
-      position: relative;
-    }
-
-    .preset-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      background: rgba(15, 17, 26, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      padding: 6px 8px;
-      border-radius: 999px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .preset-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 8px 16px;
-      border-radius: 999px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .preset-btn:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .preset-btn.active {
-      color: #000;
-      background: linear-gradient(135deg, var(--accent-gold), var(--accent-yellow));
-      box-shadow: 0 4px 15px var(--accent-glow);
-    }
-
-    /* Secondary Controls / Options */
-    .toolbar-secondary {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      font-size: 0.8rem;
-    }
-
-    .toggle-chip {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 14px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      border-radius: 999px;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.25s ease;
-      font-weight: 500;
-    }
-
-    .toggle-chip:hover {
-      border-color: var(--glass-highlight);
-      color: #fff;
-    }
-
-    .toggle-chip.active {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      background: rgba(255, 183, 3, 0.08);
-    }
-
-    .theme-picker {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 999px;
     }
 
     .theme-dot {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       cursor: pointer;
-      transition: transform 0.2s ease, border-color 0.2s ease;
       border: 2px solid transparent;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
     .theme-dot:hover {
-      transform: scale(1.15);
+      transform: scale(1.18);
     }
 
     .theme-dot.active {
-      border-color: #fff;
+      border-color: #ffffff;
       transform: scale(1.2);
     }
 
     .dot-gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
     .dot-cyber { background: linear-gradient(135deg, #38bdf8, #06b6d4); }
     .dot-dark { background: linear-gradient(135deg, #64748b, #334155); }
-
-    /* Sound indicator */
-    .sound-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .sound-btn:hover {
-      color: #fff;
-      border-color: var(--glass-highlight);
-    }
-
-    /* Live Coordinates Indicator */
-    .coords-tag {
-      position: absolute;
-      bottom: 24px;
-      right: 32px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      opacity: 0.6;
-      display: flex;
-      gap: 12px;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    /* Mobile / Responsive Styling */
-    @media (max-width: 860px) {
-      :root {
-        --phone-width: 270px;
-      }
-
-      .badge-top-right {
-        right: -30px;
-        top: 8%;
-        transform: translateZ(40px) scale(0.9);
-      }
-
-      .badge-bottom-left {
-        left: -30px;
-        bottom: 12%;
-        transform: translateZ(40px) scale(0.9);
-      }
-
-      .coords-tag {
-        display: none;
-      }
-    }
-
-    @media (max-width: 520px) {
-      :root {
-        --phone-width: 230px;
-      }
-
-      header {
-        padding: 16px 20px;
-      }
-
-      .brand-logo {
-        font-size: 1.05rem;
-      }
-
-      .preset-btn {
-        padding: 6px 12px;
-        font-size: 0.75rem;
-      }
-
-      .badge-top-right,
-      .badge-bottom-left {
-        display: none;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Glow & Mesh Background -->
-  <div class="ambient-glow" id="ambientGlow"></div>
-  <div class="bg-grid"></div>
+  <!-- Ambient Glow -->
+  <div class="ambient-glow"></div>
 
-  <!-- Header -->
-  <header>
-    <div class="brand-logo">
-      <div class="brand-badge">3D</div>
-      <span>MAE Device Showcase</span>
-    </div>
-    <div class="header-tags">
-      <div class="status-pill">
-        <span class="status-dot"></span>
-        <span>Interactive 3D Stage</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Interactive 3D Showcase Stage -->
-  <main class="showcase-stage" id="stage">
-    <div class="scene" id="scene">
+  <!-- 3D Interactive Stage -->
+  <div class="card-3d-wrap" id="cardWrap">
+    <div class="phone-card" id="phoneCard">
+      <!-- 3D Ground Shadow -->
+      <div class="shadow" id="shadow"></div>
       
-      <!-- 3D Phone Object -->
-      <div class="phone-3d-card" id="phoneCard">
-        
-        <!-- Floor Shadow -->
-        <div class="shadow-floor" id="shadowFloor"></div>
-
-        <!-- Floor Reflection -->
-        <div class="floor-reflection">
-          <img src="phone.png" alt="Reflection" draggable="false">
-        </div>
-
-        <!-- Phone Golden Rim Glow -->
-        <div class="phone-rim-glow"></div>
-
-        <!-- Main Device PNG Layer -->
-        <img class="phone-media" src="phone.png" alt="Maybank MAE App Mockup on iPhone" id="phoneImg" draggable="false">
-
-        <!-- Dynamic Specular Glare Layer -->
-        <div class="glare-overlay" id="glareOverlay"></div>
-
-        <!-- Floating 3D Badge 1 (Parallax depth layer) -->
-        <div class="floating-layer badge-top-right" id="badgeRight" title="Live Security Feature">
-          <div class="badge-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-          </div>
-          <div class="badge-content">
-            <h4>Secure2u Active</h4>
-            <p>Hardware biometric lock</p>
-          </div>
-        </div>
-
-        <!-- Floating 3D Badge 2 (Parallax depth layer) -->
-        <div class="floating-layer badge-bottom-left" id="badgeLeft" title="Tabung Goals Feature">
-          <div class="badge-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-          </div>
-          <div class="badge-content">
-            <h4>Tabung Savings</h4>
-            <p>Smart auto-save goal</p>
-          </div>
-        </div>
-
-      </div>
+      <!-- Phone Image -->
+      <img src="phone.png" alt="Phone Mockup" class="phone-img" draggable="false">
+      
+      <!-- Glare Light Reflection -->
+      <div class="glare" id="glare"></div>
     </div>
-  </main>
-
-  <!-- Real-time Coordinates Display -->
-  <div class="coords-tag">
-    <span>RotX: <strong id="rotXVal">0.0°</strong></span>
-    <span>RotY: <strong id="rotYVal">0.0°</strong></span>
-    <span>FPS: <strong id="fpsVal">60</strong></span>
   </div>
 
-  <!-- Interactive Controls & Presets Panel -->
-  <section class="controls-panel">
-    
-    <!-- Presets Bar -->
-    <div class="preset-bar">
-      <button class="preset-btn active" data-preset="hero">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-        Hero Float
-      </button>
-      <button class="preset-btn" data-preset="isometric">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-        Isometric 3D
-      </button>
-      <button class="preset-btn" data-preset="cinematic">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg>
-        Dramatic Tilt
-      </button>
-      <button class="preset-btn" data-preset="front">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-        Front View
-      </button>
-    </div>
+  <!-- Theme Switcher -->
+  <div class="theme-bar">
+    <div class="theme-dot dot-gold active" data-theme="gold" title="Gold Luxury"></div>
+    <div class="theme-dot dot-cyber" data-theme="cyber" title="Cyber Cyan"></div>
+    <div class="theme-dot dot-dark" data-theme="dark" title="Studio Dark"></div>
+  </div>
 
-    <!-- Secondary Controls & Theme Switcher -->
-    <div class="toolbar-secondary">
-      
-      <!-- Auto Levitate Toggle -->
-      <div class="toggle-chip active" id="levitateToggle">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
-        <span>Perpetual Levitation</span>
-      </div>
-
-      <!-- Glare Effect Toggle -->
-      <div class="toggle-chip active" id="glareToggle">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-        <span>Glass Sheen</span>
-      </div>
-
-      <!-- Parallax Badges Toggle -->
-      <div class="toggle-chip active" id="badgesToggle">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-        <span>3D Depth Layers</span>
-      </div>
-
-      <!-- Theme Switcher -->
-      <div class="theme-picker">
-        <div class="theme-dot dot-gold active" data-set-theme="gold" title="Gold Titanium"></div>
-        <div class="theme-dot dot-cyber" data-set-theme="cyber" title="Cyber Cyan"></div>
-        <div class="theme-dot dot-dark" data-set-theme="monochrome" title="Studio Dark"></div>
-      </div>
-
-      <!-- Audio Mute Toggle -->
-      <button class="sound-btn" id="soundBtn" title="Toggle Sound Feedback">
-        <svg id="soundIconOn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-      </button>
-
-    </div>
-  </section>
-
-  <!-- Interactive 3D Physics Engine Script -->
   <script>
-    // State management
-    const state = {
-      targetRotX: -6,
-      targetRotY: 12,
-      targetRotZ: 0,
-      currentRotX: -6,
-      currentRotY: 12,
-      currentRotZ: 0,
-      targetTransZ: 20,
-      currentTransZ: 20,
-      levitationTime: 0,
-      isLevitating: true,
-      hasGlare: true,
-      hasBadges: true,
-      activePreset: 'hero',
-      isDragging: false,
-      dragStartX: 0,
-      dragStartY: 0,
-      soundEnabled: true,
-      theme: 'gold',
-      fps: 60,
-      lastFrameTime: performance.now(),
-      frameCount: 0
-    };
-
-    // DOM Elements
-    const stage = document.getElementById('stage');
-    const phoneCard = document.getElementById('phoneCard');
-    const glareOverlay = document.getElementById('glareOverlay');
-    const shadowFloor = document.getElementById('shadowFloor');
-    const badgeRight = document.getElementById('badgeRight');
-    const badgeLeft = document.getElementById('badgeLeft');
-    const rotXVal = document.getElementById('rotXVal');
-    const rotYVal = document.getElementById('rotYVal');
-    const fpsVal = document.getElementById('fpsVal');
-    const presetBtns = document.querySelectorAll('.preset-btn');
-    const levitateToggle = document.getElementById('levitateToggle');
-    const glareToggle = document.getElementById('glareToggle');
-    const badgesToggle = document.getElementById('badgesToggle');
+    const wrap = document.getElementById('cardWrap');
+    const card = document.getElementById('phoneCard');
+    const glare = document.getElementById('glare');
+    const shadow = document.getElementById('shadow');
     const themeDots = document.querySelectorAll('.theme-dot');
-    const soundBtn = document.getElementById('soundBtn');
 
-    // Web Audio Sound Synthesizer for tactile micro-interactions
-    let audioCtx = null;
-    function playSfx(type = 'click') {
-      if (!state.soundEnabled) return;
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+    // 3D Physics State
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let currentRotX = 0;
+    let currentRotY = 0;
+    
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
 
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+    // Pointer Down (Mouse click or finger touch down)
+    window.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
 
-        const now = audioCtx.currentTime;
-        if (type === 'click') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(600, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-          osc.start(now);
-          osc.stop(now + 0.08);
-        } else if (type === 'preset') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(320, now);
-          osc.frequency.exponentialRampToValueAtTime(540, now + 0.12);
-          gain.gain.setValueAtTime(0.07, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-          osc.start(now);
-          osc.stop(now + 0.15);
-        }
-      } catch (e) {}
-    }
-
-    // Linear Interpolation helper
-    function lerp(start, end, factor) {
-      return start + (end - start) * factor;
-    }
-
-    // Preset configurations
-    const PRESETS = {
-      hero: { rotX: -8, rotY: 14, rotZ: -2, transZ: 30, levitate: true },
-      isometric: { rotX: -20, rotY: 28, rotZ: -8, transZ: 40, levitate: false },
-      cinematic: { rotX: 18, rotY: -22, rotZ: 4, transZ: 50, levitate: true },
-      front: { rotX: 0, rotY: 0, rotZ: 0, transZ: 0, levitate: false }
-    };
-
-    function applyPreset(presetKey) {
-      state.activePreset = presetKey;
-      const config = PRESETS[presetKey];
-      if (!config) return;
-
-      state.targetRotX = config.rotX;
-      state.targetRotY = config.rotY;
-      state.targetRotZ = config.rotZ;
-      state.targetTransZ = config.transZ;
-      state.isLevitating = config.levitate;
-
-      levitateToggle.classList.toggle('active', state.isLevitating);
-
-      presetBtns.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.preset === presetKey);
-      });
-
-      playSfx('preset');
-    }
-
-    // Mouse Tracking with Smooth 3D tilt
-    let mouseOverStage = false;
-
+    // Pointer Move (Mouse hover OR drag rotation)
     window.addEventListener('pointermove', (e) => {
-      if (state.isDragging) {
-        const deltaX = e.clientX - state.dragStartX;
-        const deltaY = e.clientY - state.dragStartY;
-        state.targetRotY += deltaX * 0.35;
-        state.targetRotX -= deltaY * 0.35;
-        state.dragStartX = e.clientX;
-        state.dragStartY = e.clientY;
-        return;
-      }
+      if (isDragging) {
+        // Drag to rotate with touch or mouse
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
 
-      const rect = stage.getBoundingClientRect();
-      const isInside = (
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right &&
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom
-      );
+        targetRotY += deltaX * 0.4;
+        targetRotX -= deltaY * 0.4;
 
-      if (isInside || mouseOverStage) {
+        // Soft limit rotation range for natural front view
+        targetRotX = Math.max(-45, Math.min(45, targetRotX));
+        targetRotY = Math.max(-50, Math.min(50, targetRotY));
+
+        startX = e.clientX;
+        startY = e.clientY;
+      } else {
+        // Hover 3D tilt tracking
+        const rect = wrap.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        const normX = (e.clientX - centerX) / (rect.width / 2);
-        const normY = (e.clientY - centerY) / (rect.height / 2);
 
-        // Map mouse offset to 3D rotation angles
-        if (state.activePreset === 'front') {
-          state.targetRotY = normX * 18;
-          state.targetRotX = -normY * 18;
-        } else if (state.activePreset === 'hero') {
-          state.targetRotY = 14 + normX * 22;
-          state.targetRotX = -8 - normY * 18;
-        } else if (state.activePreset === 'isometric') {
-          state.targetRotY = 28 + normX * 15;
-          state.targetRotX = -20 - normY * 12;
-        } else {
-          state.targetRotY = -22 + normX * 20;
-          state.targetRotX = 18 - normY * 16;
-        }
+        const normX = (e.clientX - centerX) / (window.innerWidth / 2);
+        const normY = (e.clientY - centerY) / (window.innerHeight / 2);
 
-        // Glare angle tracking
-        const glareAngle = Math.atan2(normY, normX) * (180 / Math.PI) + 90;
-        const glareIntensity = Math.min(0.85, Math.max(0.2, Math.hypot(normX, normY) * 0.7));
-        glareOverlay.style.background = `linear-gradient(${glareAngle}deg, rgba(255,255,255,${glareIntensity * 0.7}) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0) 70%)`;
+        targetRotY = normX * 22;
+        targetRotX = -normY * 20;
       }
+
+      // Dynamic glare sheen
+      const angle = Math.atan2(targetRotX, -targetRotY) * (180 / Math.PI) + 90;
+      glare.style.background = `linear-gradient(${angle}deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 65%)`;
     });
 
-    stage.addEventListener('pointerenter', () => {
-      mouseOverStage = true;
+    // Pointer Up (Release drag)
+    window.addEventListener('pointerup', () => {
+      isDragging = false;
     });
 
-    stage.addEventListener('pointerleave', () => {
-      mouseOverStage = false;
-      if (!state.isDragging && PRESETS[state.activePreset]) {
-        state.targetRotX = PRESETS[state.activePreset].rotX;
-        state.targetRotY = PRESETS[state.activePreset].rotY;
-        state.targetRotZ = PRESETS[state.activePreset].rotZ;
-      }
+    // Reset smoothly when cursor leaves window
+    document.addEventListener('mouseleave', () => {
+      isDragging = false;
+      targetRotX = 0;
+      targetRotY = 0;
     });
 
-    // Drag to rotate in 3D
-    stage.addEventListener('pointerdown', (e) => {
-      state.isDragging = true;
-      state.dragStartX = e.clientX;
-      state.dragStartY = e.clientY;
-      stage.setPointerCapture(e.pointerId);
-    });
+    // Smooth Lerp Render Loop
+    function animate() {
+      currentRotX += (targetRotX - currentRotX) * 0.1;
+      currentRotY += (targetRotY - currentRotY) * 0.1;
 
-    stage.addEventListener('pointerup', (e) => {
-      state.isDragging = false;
-      try { stage.releasePointerCapture(e.pointerId); } catch(err) {}
-    });
+      // Apply 3D rotation
+      card.style.transform = `rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
 
-    // Mobile Device Orientation Gyroscope Support
-    if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
-      window.addEventListener('deviceorientation', (e) => {
-        if (e.gamma !== null && e.beta !== null) {
-          const gamma = Math.max(-30, Math.min(30, e.gamma)); // Left-to-right tilt
-          const beta = Math.max(-30, Math.min(30, e.beta - 45)); // Front-to-back tilt
-          state.targetRotY = (gamma / 30) * 25;
-          state.targetRotX = -(beta / 30) * 20;
-        }
-      });
+      // Dynamic shadow deformation
+      const shadowSkew = -currentRotY * 0.6;
+      shadow.style.transform = `translateX(-50%) rotateX(90deg) skewX(${shadowSkew}deg) translateZ(-40px)`;
+
+      requestAnimationFrame(animate);
     }
 
-    // Main 60/120 FPS Physics & Render Loop
-    function renderLoop(timestamp) {
-      // FPS counter calculation
-      state.frameCount++;
-      if (timestamp - state.lastFrameTime >= 500) {
-        state.fps = Math.round((state.frameCount * 1000) / (timestamp - state.lastFrameTime));
-        fpsVal.textContent = state.fps;
-        state.frameCount = 0;
-        state.lastFrameTime = timestamp;
-      }
+    animate();
 
-      // Smooth Physics interpolation
-      const smoothFactor = 0.085;
-      state.currentRotX = lerp(state.currentRotX, state.targetRotX, smoothFactor);
-      state.currentRotY = lerp(state.currentRotY, state.targetRotY, smoothFactor);
-      state.currentRotZ = lerp(state.currentRotZ, state.targetRotZ, smoothFactor);
-      state.currentTransZ = lerp(state.currentTransZ, state.targetTransZ, smoothFactor);
-
-      // Levitation floating oscillation
-      let floatOffsetY = 0;
-      let floatRotOffset = 0;
-      if (state.isLevitating) {
-        state.levitationTime += 0.025;
-        floatOffsetY = Math.sin(state.levitationTime) * 12;
-        floatRotOffset = Math.cos(state.levitationTime * 0.8) * 2;
-      }
-
-      const finalRotX = state.currentRotX + (state.isLevitating ? floatRotOffset : 0);
-      const finalRotY = state.currentRotY;
-      const finalRotZ = state.currentRotZ;
-      const finalTransY = floatOffsetY;
-
-      // Apply transform to Phone 3D Container
-      phoneCard.style.transform = `
-        translateY(${finalTransY}px)
-        rotateX(${finalRotX}deg)
-        rotateY(${finalRotY}deg)
-        rotateZ(${finalRotZ}deg)
-        translateZ(${state.currentTransZ}px)
-      `;
-
-      // Update Floor Shadow to dynamically skew, blur, and scale with tilt & height
-      const shadowSkew = -finalRotY * 0.7;
-      const shadowScaleX = 1 + Math.abs(finalRotY) * 0.006;
-      const shadowScaleY = 1 - Math.abs(finalRotX) * 0.008;
-      const shadowOpacity = Math.max(0.2, 0.7 - (finalTransY / 60));
-      shadowFloor.style.transform = `
-        translateX(-50%)
-        rotateX(85deg)
-        skewX(${shadowSkew}deg)
-        scale(${shadowScaleX}, ${shadowScaleY})
-        translateZ(-60px)
-      `;
-      shadowFloor.style.opacity = shadowOpacity;
-
-      // Badges dynamic parallax depth reaction
-      if (state.hasBadges) {
-        const badge1OffsetZ = 70 + Math.sin(state.levitationTime * 1.2) * 5;
-        const badge2OffsetZ = 85 - Math.sin(state.levitationTime * 1.2) * 5;
-        badgeRight.style.transform = `translateZ(${badge1OffsetZ}px) rotateY(${-finalRotY * 0.3}deg)`;
-        badgeLeft.style.transform = `translateZ(${badge2OffsetZ}px) rotateY(${-finalRotY * 0.3}deg)`;
-      }
-
-      // Update real-time HUD coords
-      rotXVal.textContent = `${finalRotX.toFixed(1)}°`;
-      rotYVal.textContent = `${finalRotY.toFixed(1)}°`;
-
-      requestAnimationFrame(renderLoop);
-    }
-
-    requestAnimationFrame(renderLoop);
-
-    // Button event listeners
-    presetBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        applyPreset(btn.dataset.preset);
-      });
-    });
-
-    levitateToggle.addEventListener('click', () => {
-      state.isLevitating = !state.isLevitating;
-      levitateToggle.classList.toggle('active', state.isLevitating);
-      playSfx('click');
-    });
-
-    glareToggle.addEventListener('click', () => {
-      state.hasGlare = !state.hasGlare;
-      glareToggle.classList.toggle('active', state.hasGlare);
-      glareOverlay.style.display = state.hasGlare ? 'block' : 'none';
-      playSfx('click');
-    });
-
-    badgesToggle.addEventListener('click', () => {
-      state.hasBadges = !state.hasBadges;
-      badgesToggle.classList.toggle('active', state.hasBadges);
-      badgeRight.style.display = state.hasBadges ? 'flex' : 'none';
-      badgeLeft.style.display = state.hasBadges ? 'flex' : 'none';
-      playSfx('click');
-    });
-
+    // Theme Switcher Logic
     themeDots.forEach(dot => {
       dot.addEventListener('click', () => {
         themeDots.forEach(d => d.classList.remove('active'));
         dot.classList.add('active');
-        const theme = dot.dataset.setTheme;
+        const theme = dot.dataset.theme;
         document.body.setAttribute('data-theme', theme);
-        playSfx('click');
-      });
-    });
-
-    soundBtn.addEventListener('click', () => {
-      state.soundEnabled = !state.soundEnabled;
-      soundBtn.style.opacity = state.soundEnabled ? '1' : '0.4';
-      if (state.soundEnabled) playSfx('click');
-    });
-
-    // Floating badges click feedback
-    [badgeRight, badgeLeft].forEach(badge => {
-      badge.addEventListener('click', (e) => {
-        e.stopPropagation();
-        playSfx('click');
-        badge.style.transform += ' scale(1.08)';
-        setTimeout(() => {
-          badge.style.transform = badge.style.transform.replace(' scale(1.08)', '');
-        }, 180);
       });
     });
   </script>
