@@ -11,7 +11,7 @@
             --bg-gradient: radial-gradient(circle at 50% 35%, rgba(245, 166, 35, 0.18) 0%, #0e111a 55%, #06070a 100%);
             --accent-glow: rgba(255, 183, 3, 0.3);
             --glass-border: rgba(255, 255, 255, 0.12);
-            --phone-width: min(320px, 76vw);
+            --phone-width: min(300px, 70vw);
         }
 
         [data-theme="cyber"] {
@@ -54,8 +54,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -55%);
-            width: 520px;
-            height: 520px;
+            width: 540px;
+            height: 540px;
             background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
             filter: blur(60px);
             pointer-events: none;
@@ -98,81 +98,101 @@
             color: #fff;
         }
 
-        /* Slider Viewport Container */
-        .slider-viewport {
+        /* 3D Carousel Stage */
+        .carousel-stage {
             position: relative;
             width: 100%;
+            max-width: 1100px;
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             perspective: 1200px;
+            perspective-origin: 50% 50%;
             z-index: 10;
         }
 
-        /* Nav Arrows */
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 30;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .nav-arrow:hover {
-            background: rgba(255, 255, 255, 0.18);
-            transform: translateY(-50%) scale(1.1);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .nav-arrow:active {
-            transform: translateY(-50%) scale(0.95);
-        }
-
-        .nav-prev {
-            left: max(20px, calc(50% - var(--phone-width) * 0.9));
-        }
-
-        .nav-next {
-            right: max(20px, calc(50% - var(--phone-width) * 0.9));
-        }
-
-        /* 3D Stage & Card Container */
-        .card-3d-wrap {
+        /* 3D Track Containing All Phones */
+        .carousel-track {
             position: relative;
             width: var(--phone-width);
             aspect-ratio: 1 / 2;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: grab;
-            z-index: 10;
+            transform-style: preserve-3d;
         }
 
-        .card-3d-wrap:active {
+        /* Individual 3D Phone Item */
+        .phone-item {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            will-change: transform, opacity, filter;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, filter 0.5s ease;
+        }
+
+        /* 3D State: Focused Main Card in Center */
+        .phone-item.state-active {
+            z-index: 10;
+            opacity: 1;
+            filter: brightness(1) blur(0px);
+            cursor: grab;
+            pointer-events: auto;
+        }
+
+        .phone-item.state-active:active {
             cursor: grabbing;
         }
 
-        /* 3D Phone Element with full 3D rotation */
-        .phone-card {
+        /* 3D State: Preview Card to Left (Pushed further back to prevent overlap) */
+        .phone-item.state-prev {
+            transform: translateX(-310px) translateZ(-200px) rotateY(30deg) scale(0.68) !important;
+            z-index: 5;
+            opacity: 0.42;
+            filter: brightness(0.65) blur(0.6px);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .phone-item.state-prev:hover {
+            opacity: 0.75;
+            filter: brightness(0.85) blur(0px);
+            transform: translateX(-300px) translateZ(-170px) rotateY(24deg) scale(0.72) !important;
+        }
+
+        /* 3D State: Preview Card to Right (Pushed further back to prevent overlap) */
+        .phone-item.state-next {
+            transform: translateX(310px) translateZ(-200px) rotateY(-30deg) scale(0.68) !important;
+            z-index: 5;
+            opacity: 0.42;
+            filter: brightness(0.65) blur(0.6px);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .phone-item.state-next:hover {
+            opacity: 0.75;
+            filter: brightness(0.85) blur(0px);
+            transform: translateX(300px) translateZ(-170px) rotateY(-24deg) scale(0.72) !important;
+        }
+
+        /* 3D State: Hidden */
+        .phone-item.state-hidden {
+            transform: translateZ(-400px) scale(0.45) !important;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 3D Card Inner Wrapper (for live rotation on active item) */
+        .phone-card-inner {
             position: relative;
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
             will-change: transform;
-            transition: opacity 0.3s ease;
         }
 
         /* Front & Back Faces */
@@ -198,7 +218,6 @@
             object-fit: contain;
             pointer-events: none;
             filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
-            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* Back Face (Device Back Image Layer) */
@@ -232,7 +251,46 @@
             transform-style: preserve-3d;
         }
 
-        /* Bottom Controls: Slider Dots & Theme Switcher */
+        /* Nav Arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-50%) scale(1.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-arrow:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .nav-prev {
+            left: max(16px, calc(50% - var(--phone-width) * 1.35));
+        }
+
+        .nav-next {
+            right: max(16px, calc(50% - var(--phone-width) * 1.35));
+        }
+
+        /* Bottom Controls: Pagination & Themes */
         .bottom-controls {
             display: flex;
             flex-direction: column;
@@ -264,7 +322,7 @@
         }
 
         .dot.active {
-            width: 42px;
+            width: 44px;
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             box-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
         }
@@ -312,20 +370,33 @@
             background: linear-gradient(135deg, #64748b, #334155);
         }
 
-        /* Transitions when switching slides */
-        .slide-exit-left {
-            transform: translateX(-40px) scale(0.92) rotateY(-15deg);
-            opacity: 0;
+        /* Responsive Mobile Styling */
+        @media (max-width: 860px) {
+            .phone-item.state-prev {
+                transform: translateX(-210px) translateZ(-160px) rotateY(26deg) scale(0.64) !important;
+            }
+
+            .phone-item.state-next {
+                transform: translateX(210px) translateZ(-160px) rotateY(-26deg) scale(0.64) !important;
+            }
+
+            .nav-prev {
+                left: 10px;
+            }
+
+            .nav-next {
+                right: 10px;
+            }
         }
 
-        .slide-exit-right {
-            transform: translateX(40px) scale(0.92) rotateY(15deg);
-            opacity: 0;
-        }
+        @media (max-width: 580px) {
+            .phone-item.state-prev {
+                transform: translateX(-165px) translateZ(-170px) rotateY(24deg) scale(0.56) !important;
+            }
 
-        .slide-enter {
-            transform: scale(1) rotateY(0deg);
-            opacity: 1;
+            .phone-item.state-next {
+                transform: translateX(165px) translateZ(-170px) rotateY(-24deg) scale(0.56) !important;
+            }
         }
     </style>
 </head>
@@ -344,8 +415,8 @@
         </div>
     </div>
 
-    <!-- Slider Viewport -->
-    <div class="slider-viewport">
+    <!-- 3D Carousel Stage -->
+    <div class="carousel-stage" id="carouselStage">
 
         <!-- Previous Slide Button -->
         <button class="nav-arrow nav-prev" id="prevBtn" title="Previous Phone">
@@ -355,26 +426,45 @@
             </svg>
         </button>
 
-        <!-- 3D Interactive Stage -->
-        <div class="card-3d-wrap" id="cardWrap">
-            <div class="phone-card" id="phoneCard">
+        <!-- 3D Track with Multiple Phones -->
+        <div class="carousel-track" id="carouselTrack">
 
-                <!-- 3D Ground Shadow -->
-                <div class="shadow" id="shadow"></div>
-
-                <!-- Front Face (Screen & App UI) -->
-                <div class="phone-face face-front">
-                    <img src="phone.png" alt="Phone Mockup Front" class="phone-img" id="phoneImg" draggable="false">
-                    <div class="glare" id="glareFront"></div>
+            <!-- Phone 1: Maybank MAE -->
+            <div class="phone-item state-active" data-index="0">
+                <div class="phone-card-inner">
+                    <!-- Floor Shadow -->
+                    <div class="shadow"></div>
+                    <!-- Front Face -->
+                    <div class="phone-face face-front">
+                        <img src="phone.png" alt="Maybank MAE Mockup" class="phone-img" draggable="false">
+                        <div class="glare glare-front"></div>
+                    </div>
+                    <!-- Back Face -->
+                    <div class="phone-face face-back">
+                        <img src="phone-back.png" alt="iPhone Back" class="phone-img" draggable="false">
+                        <div class="glare glare-back"></div>
+                    </div>
                 </div>
-
-                <!-- Back Face (Device Back Image) -->
-                <div class="phone-face face-back">
-                    <img src="phone-back.png" alt="Phone Mockup Back" class="phone-img" draggable="false">
-                    <div class="glare" id="glareBack"></div>
-                </div>
-
             </div>
+
+            <!-- Phone 2: Sunway Medical Centre -->
+            <div class="phone-item state-next" data-index="1">
+                <div class="phone-card-inner">
+                    <!-- Floor Shadow -->
+                    <div class="shadow"></div>
+                    <!-- Front Face -->
+                    <div class="phone-face face-front">
+                        <img src="phone2.png" alt="Sunway Medical Centre Mockup" class="phone-img" draggable="false">
+                        <div class="glare glare-front"></div>
+                    </div>
+                    <!-- Back Face -->
+                    <div class="phone-face face-back">
+                        <img src="phone-back.png" alt="iPhone Back" class="phone-img" draggable="false">
+                        <div class="glare glare-back"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Next Slide Button -->
@@ -406,16 +496,14 @@
     </div>
 
     <script>
-        // Slides Data
+        // Slide Configurations
         const slides = [
             {
                 title: "MAE • Maybank",
-                image: "phone.png",
                 theme: "gold"
             },
             {
                 title: "Sunway Medical Centre",
-                image: "phone2.png",
                 theme: "cyber"
             }
         ];
@@ -423,20 +511,16 @@
         let currentSlideIndex = 0;
 
         // DOM Elements
-        const wrap = document.getElementById('cardWrap');
-        const card = document.getElementById('phoneCard');
-        const phoneImg = document.getElementById('phoneImg');
+        const stage = document.getElementById('carouselStage');
+        const phoneItems = document.querySelectorAll('.phone-item');
         const appTitle = document.getElementById('appTitle');
-        const glareFront = document.getElementById('glareFront');
-        const glareBack = document.getElementById('glareBack');
-        const shadow = document.getElementById('shadow');
         const resetBtn = document.getElementById('resetBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const dots = document.querySelectorAll('.dot');
         const themeDots = document.querySelectorAll('.theme-dot');
 
-        // 3D Physics State (Unconstrained 360° Y Rotation)
+        // Active 3D Rotation Physics State
         let targetRotX = 0;
         let targetRotY = 0;
         let currentRotX = 0;
@@ -445,149 +529,170 @@
         let isDragging = false;
         let startX = 0;
         let startY = 0;
-        let dragDistanceX = 0;
         let velocityY = 0;
         let lastX = 0;
 
-        // Switch Slide Function
-        function goToSlide(index, direction = 'next') {
+        // Update Phone States across the 3D Carousel
+        function updateCarouselPositions() {
+            phoneItems.forEach((item) => {
+                const index = parseInt(item.dataset.index);
+                const diff = (index - currentSlideIndex + slides.length) % slides.length;
+
+                item.classList.remove('state-active', 'state-prev', 'state-next', 'state-hidden');
+
+                if (diff === 0) {
+                    item.classList.add('state-active');
+                } else if (diff === 1 || (diff === -(slides.length - 1))) {
+                    item.classList.add('state-next');
+                } else if (diff === slides.length - 1 || diff === -1) {
+                    item.classList.add('state-prev');
+                } else {
+                    item.classList.add('state-hidden');
+                }
+
+                // Reset inner transform on inactive items
+                if (diff !== 0) {
+                    const inner = item.querySelector('.phone-card-inner');
+                    if (inner) inner.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                }
+            });
+
+            // Update UI Title, Dots, and Theme
+            const activeSlide = slides[currentSlideIndex];
+            appTitle.textContent = activeSlide.title;
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlideIndex);
+            });
+
+            setTheme(activeSlide.theme);
+
+            // Reset rotation angles smoothly when changing slides
+            targetRotX = 0;
+            targetRotY = 0;
+        }
+
+        function goToSlide(index) {
             if (index < 0) index = slides.length - 1;
             if (index >= slides.length) index = 0;
             if (index === currentSlideIndex) return;
 
             currentSlideIndex = index;
-            const slide = slides[index];
-
-            // Smooth slide transition
-            phoneImg.style.transition = 'opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
-            phoneImg.style.opacity = '0';
-            phoneImg.style.transform = direction === 'next' ? 'translateX(-30px) scale(0.95)' : 'translateX(30px) scale(0.95)';
-
-            setTimeout(() => {
-                phoneImg.src = slide.image;
-                appTitle.textContent = slide.title;
-
-                // Update dots
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === currentSlideIndex);
-                });
-
-                // Set theme matching app
-                setTheme(slide.theme);
-
-                // Animate in
-                phoneImg.style.transform = direction === 'next' ? 'translateX(30px) scale(0.95)' : 'translateX(-30px) scale(0.95)';
-
-                requestAnimationFrame(() => {
-                    phoneImg.style.transition = 'opacity 0.3s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
-                    phoneImg.style.opacity = '1';
-                    phoneImg.style.transform = 'translateX(0) scale(1)';
-                });
-            }, 200);
-
-            // Smoothly bring orientation back to front view
-            targetRotX = 0;
-            targetRotY = 0;
+            updateCarouselPositions();
         }
 
-        // Prev / Next button listeners
+        // Navigation Button Listeners
         prevBtn.addEventListener('click', () => {
-            goToSlide(currentSlideIndex - 1, 'prev');
+            goToSlide(currentSlideIndex - 1);
         });
 
         nextBtn.addEventListener('click', () => {
-            goToSlide(currentSlideIndex + 1, 'next');
+            goToSlide(currentSlideIndex + 1);
         });
 
-        // Pagination Dots click
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const targetIndex = parseInt(dot.dataset.slide);
-                const dir = targetIndex > currentSlideIndex ? 'next' : 'prev';
-                goToSlide(targetIndex, dir);
+        // Click on preview phone items to focus them
+        phoneItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const index = parseInt(item.dataset.index);
+                if (index !== currentSlideIndex) {
+                    e.stopPropagation();
+                    goToSlide(index);
+                }
             });
         });
 
-        // Keyboard Arrow navigation
+        // Pagination Dots Click
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                goToSlide(parseInt(dot.dataset.slide));
+            });
+        });
+
+        // Keyboard Arrow Keys
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') goToSlide(currentSlideIndex - 1, 'prev');
-            if (e.key === 'ArrowRight') goToSlide(currentSlideIndex + 1, 'next');
+            if (e.key === 'ArrowLeft') goToSlide(currentSlideIndex - 1);
+            if (e.key === 'ArrowRight') goToSlide(currentSlideIndex + 1);
             if (e.key === 'r' || e.key === 'R') { targetRotX = 0; targetRotY = 0; }
         });
 
-        // Pointer Down (Mouse click or finger touch down)
+        // Pointer Events for 3D Drag & Rotation on Active Phone
         window.addEventListener('pointerdown', (e) => {
-            // Don't hijack button clicks
             if (e.target.closest('.nav-arrow') || e.target.closest('.slider-dots') || e.target.closest('.theme-bar') || e.target.closest('.top-bar')) {
                 return;
             }
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            lastX = e.clientX;
-            dragDistanceX = 0;
-            velocityY = 0;
+
+            const activeItem = document.querySelector('.phone-item.state-active');
+            if (activeItem && activeItem.contains(e.target)) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                lastX = e.clientX;
+                velocityY = 0;
+            }
         });
 
-        // Pointer Move (Mouse hover OR 360° Drag Rotation)
         window.addEventListener('pointermove', (e) => {
             if (isDragging) {
                 const deltaX = e.clientX - startX;
                 const deltaY = e.clientY - startY;
 
-                dragDistanceX += Math.abs(e.clientX - lastX);
                 velocityY = (e.clientX - lastX) * 0.5;
                 lastX = e.clientX;
 
-                // Full 360-degree horizontal rotation
+                // Full 360° rotation on the active card
                 targetRotY += deltaX * 0.55;
                 targetRotX -= deltaY * 0.35;
-
-                // Soft clamp on vertical pitch only
                 targetRotX = Math.max(-40, Math.min(40, targetRotX));
 
                 startX = e.clientX;
                 startY = e.clientY;
             } else {
-                // Hover 3D tilt tracking relative to viewport center
-                const rect = wrap.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
+                // Subtle 3D tilt tracking on hover
+                const activeItem = document.querySelector('.phone-item.state-active');
+                if (activeItem) {
+                    const rect = activeItem.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
 
-                const normX = (e.clientX - centerX) / (window.innerWidth / 2);
-                const normY = (e.clientY - centerY) / (window.innerHeight / 2);
+                    const normX = (e.clientX - centerX) / (window.innerWidth / 2);
+                    const normY = (e.clientY - centerY) / (window.innerHeight / 2);
 
-                targetRotX = -normY * 18;
+                    targetRotX = -normY * 18;
+                }
             }
 
-            // Dynamic glare sheen
-            const rad = (currentRotY * Math.PI) / 180;
-            const lightX = Math.sin(rad);
-            const glareAngle = Math.atan2(targetRotX, -lightX * 20) * (180 / Math.PI) + 90;
-            const glareStyle = `linear-gradient(${glareAngle}deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 65%)`;
+            // Update Glare sheen on active phone
+            const activeItem = document.querySelector('.phone-item.state-active');
+            if (activeItem) {
+                const glareFront = activeItem.querySelector('.glare-front');
+                const glareBack = activeItem.querySelector('.glare-back');
+                const rad = (currentRotY * Math.PI) / 180;
+                const lightX = Math.sin(rad);
+                const glareAngle = Math.atan2(targetRotX, -lightX * 20) * (180 / Math.PI) + 90;
+                const glareStyle = `linear-gradient(${glareAngle}deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 65%)`;
 
-            glareFront.style.background = glareStyle;
-            glareBack.style.background = glareStyle;
+                if (glareFront) glareFront.style.background = glareStyle;
+                if (glareBack) glareBack.style.background = glareStyle;
+            }
         });
 
-        // Pointer Up (Release drag with momentum)
         window.addEventListener('pointerup', () => {
             isDragging = false;
         });
 
-        // Reset to Front View (0° horizontal, 0° vertical)
+        // Reset to Front View
         resetBtn.addEventListener('click', () => {
             targetRotX = 0;
             targetRotY = 0;
         });
 
-        // Double-click/tap on phone to snap back to Front View
-        wrap.addEventListener('dblclick', () => {
+        // Double-click to reset angle
+        stage.addEventListener('dblclick', () => {
             targetRotX = 0;
             targetRotY = 0;
         });
 
-        // Smooth Lerp Physics Loop with 360° Shadow Geometry
+        // Smooth Lerp Physics Loop
         function animate() {
             if (!isDragging && Math.abs(velocityY) > 0.05) {
                 targetRotY += velocityY;
@@ -597,17 +702,25 @@
             currentRotX += (targetRotX - currentRotX) * 0.1;
             currentRotY += (targetRotY - currentRotY) * 0.1;
 
-            // Apply 360° 3D Transform
-            card.style.transform = `rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
+            const activeItem = document.querySelector('.phone-item.state-active');
+            if (activeItem) {
+                const inner = activeItem.querySelector('.phone-card-inner');
+                const shadow = activeItem.querySelector('.shadow');
 
-            // Dynamic Shadow Geometry that scales and skews through 360 degrees
-            const radY = (currentRotY * Math.PI) / 180;
-            const shadowScaleX = 0.65 + Math.abs(Math.cos(radY)) * 0.35;
-            const shadowSkew = -Math.sin(radY) * 25;
-            const shadowOpacity = 0.5 + Math.abs(Math.cos(radY)) * 0.35;
+                if (inner) {
+                    inner.style.transform = `rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
+                }
 
-            shadow.style.transform = `translateX(-50%) rotateX(90deg) skewX(${shadowSkew}deg) scaleX(${shadowScaleX}) translateZ(-40px)`;
-            shadow.style.opacity = shadowOpacity;
+                if (shadow) {
+                    const radY = (currentRotY * Math.PI) / 180;
+                    const shadowScaleX = 0.65 + Math.abs(Math.cos(radY)) * 0.35;
+                    const shadowSkew = -Math.sin(radY) * 25;
+                    const shadowOpacity = 0.5 + Math.abs(Math.cos(radY)) * 0.35;
+
+                    shadow.style.transform = `translateX(-50%) rotateX(90deg) skewX(${shadowSkew}deg) scaleX(${shadowScaleX}) translateZ(-40px)`;
+                    shadow.style.opacity = shadowOpacity;
+                }
+            }
 
             requestAnimationFrame(animate);
         }
@@ -627,6 +740,9 @@
                 setTheme(dot.dataset.theme);
             });
         });
+
+        // Initialize Carousel
+        updateCarouselPositions();
     </script>
 </body>
 
