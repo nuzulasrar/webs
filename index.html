@@ -121,6 +121,7 @@
             align-items: center;
             justify-content: center;
             transform-style: preserve-3d;
+            margin: 0 auto;
         }
 
         /* Individual 3D Phone Item */
@@ -370,32 +371,83 @@
             background: linear-gradient(135deg, #64748b, #334155);
         }
 
-        /* Responsive Mobile Styling */
-        @media (max-width: 860px) {
+        /* Responsive Breakpoints: Tablet View (769px - 1024px) */
+        @media (max-width: 1024px) and (min-width: 769px) {
             .phone-item.state-prev {
-                transform: translateX(-210px) translateZ(-160px) rotateY(26deg) scale(0.64) !important;
+                transform: translateX(-240px) translateZ(-160px) rotateY(26deg) scale(0.64) !important;
             }
 
             .phone-item.state-next {
-                transform: translateX(210px) translateZ(-160px) rotateY(-26deg) scale(0.64) !important;
+                transform: translateX(240px) translateZ(-160px) rotateY(-26deg) scale(0.64) !important;
             }
 
             .nav-prev {
-                left: 10px;
+                left: 12px;
             }
 
             .nav-next {
-                right: 10px;
+                right: 12px;
             }
         }
 
-        @media (max-width: 580px) {
-            .phone-item.state-prev {
-                transform: translateX(-165px) translateZ(-170px) rotateY(24deg) scale(0.56) !important;
+        /* Responsive Breakpoints: Smartphone View (<= 768px) */
+        /* Only the main focused phone is shown; perfectly centered with symmetrical controls */
+        @media (max-width: 768px) {
+            :root {
+                --phone-width: min(280px, 76vw);
             }
 
-            .phone-item.state-next {
-                transform: translateX(165px) translateZ(-170px) rotateY(-24deg) scale(0.56) !important;
+            body {
+                padding: 16px 0;
+                overflow-x: hidden;
+            }
+
+            .carousel-stage {
+                width: 100%;
+                max-width: 100vw;
+                padding: 0 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+
+            .carousel-track {
+                margin: 0 auto;
+                left: 0;
+                right: 0;
+            }
+
+            /* Hide preview phones on mobile screens */
+            .phone-item.state-prev,
+            .phone-item.state-next,
+            .phone-item.state-hidden {
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+                transform: translateZ(-300px) scale(0.5) !important;
+            }
+
+            .phone-item.state-active {
+                opacity: 1 !important;
+                visibility: visible !important;
+                pointer-events: auto !important;
+                transform: translateX(0px) scale(1) !important;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+
+            .nav-prev {
+                left: max(10px, calc(50% - var(--phone-width) / 2 - 54px));
+                width: 44px;
+                height: 44px;
+            }
+
+            .nav-next {
+                right: max(10px, calc(50% - var(--phone-width) / 2 - 54px));
+                width: 44px;
+                height: 44px;
             }
         }
     </style>
